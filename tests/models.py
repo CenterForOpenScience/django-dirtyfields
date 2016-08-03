@@ -69,6 +69,8 @@ class TestCurrentDatetimeModel(DirtyFieldsMixin, models.Model):
 class TestM2MModel(DirtyFieldsMixin, models.Model):
     m2m_field = models.ManyToManyField(TestModel)
 
+class TestM2MSelfModel(DirtyFieldsMixin, models.Model):
+    m2m_field = models.ManyToManyField('self', symmetrical=False)
 
 class TestModelWithCustomPK(DirtyFieldsMixin, models.Model):
     custom_primary_key = models.CharField(max_length=80, primary_key=True)

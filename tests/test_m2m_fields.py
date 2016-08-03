@@ -1,6 +1,6 @@
 import pytest
 
-from .models import TestModel, TestM2MModel, TestModelWithCustomPK, TestM2MModelWithCustomPKOnM2M
+from .models import TestModel, TestM2MModel, TestM2MSelfModel, TestModelWithCustomPK, TestM2MModelWithCustomPKOnM2M
 
 
 @pytest.mark.django_db
@@ -20,6 +20,18 @@ def test_dirty_fields_on_m2m():
     assert tm.get_dirty_fields(check_m2m={'m2m_field': set([0])}) == {'m2m_field': set([tm2.id])}
 
     assert tm.get_dirty_fields(check_m2m={'m2m_field': set([0, tm2.id])}) == {'m2m_field': set([tm2.id])}
+
+
+@pytest.mark.django_db
+def test_self_m2m_check():
+    tm = TestM2MSelfModel.objects.create()
+    tm2 = TestM2MSelfModel.objects.create()
+    tm.m2m_field.add(tm2)
+
+    assert tm._as_dict_m2m() == {'m2m_field': set([tm2.id])}
+
+    tm.save()
+    assert tm.get_dirty_fields() == {}
 
 
 @pytest.mark.django_db
